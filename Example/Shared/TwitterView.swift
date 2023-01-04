@@ -50,7 +50,7 @@ struct TwitterView: View {
                     TwitterNavBarItem(title: "Mini")
                 }
         }
-        .pagerTabStripViewStyle(.scrollableBarButton(placedInToolbar: false, tabItemSpacing: 15, tabItemHeight: 40, indicatorView: {
+        .pagerTabStripViewStyle(.scrollableBarButton(placement: .default, tabItemSpacing: 15, tabItemHeight: 40, indicatorView: {
             Rectangle().fill(.blue).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }))
     }

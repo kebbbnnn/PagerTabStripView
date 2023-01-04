@@ -37,7 +37,7 @@ struct CustomStyleView: View {
                 }
             }
         }
-        .pagerTabStripViewStyle(.barButton(placedInToolbar: false, pagerAnimation: .interactiveSpring(response: 0.5, dampingFraction: 1.00, blendDuration: 0.25), tabItemHeight: 48, barBackgroundView: {
+        .pagerTabStripViewStyle(.barButton(placement: .default, pagerAnimation: .interactiveSpring(response: 0.5, dampingFraction: 1.00, blendDuration: 0.25), tabItemHeight: 48, barBackgroundView: {
             LinearGradient(
                colors: 🌈,
                startPoint: .topLeading,

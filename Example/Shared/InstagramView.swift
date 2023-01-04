@@ -55,7 +55,7 @@ struct InstagramView: View {
                 }
             }
         }
-        .pagerTabStripViewStyle(.barButton(placedInToolbar: false, pagerAnimation: .default, tabItemHeight: 50, indicatorView: {
+        .pagerTabStripViewStyle(.barButton(placement: .default, pagerAnimation: .default, tabItemHeight: 50, indicatorView: {
             Rectangle().fill(Color(.systemGray))
         }))
     }

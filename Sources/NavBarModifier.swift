@@ -16,10 +16,17 @@ struct NavBarModifier: ViewModifier {
 
     @MainActor func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !style.placedInToolbar {
-                NavBarWrapperView(selection: $selection)
-                content
-            } else {
+            switch style.placement {
+            case .content(let position):
+                switch position {
+                case .top:
+                    NavBarWrapperView(selection: $selection)
+                    content
+                case .bottom:
+                    content
+                    NavBarWrapperView(selection: $selection)
+                }
+            case .toolbar:
                 content.toolbar(content: {
                     ToolbarItem(placement: .principal) {
                         NavBarWrapperView(selection: $selection)
