@@ -8,13 +8,15 @@
 import Foundation
 import SwiftUI
 
-internal struct IndicatorBarView<Indicator>: View where Indicator: View {
+internal struct IndicatorBarView<Indicator, BG>: View where Indicator: View, BG: View {
     @EnvironmentObject private var dataStore: DataStore
     @ViewBuilder var indicator: () -> Indicator
+    @ViewBuilder var background: () -> BG
 
     var body: some View {
         if let internalStyle = style as? PagerWithIndicatorStyle {
-            HStack {
+            ZStack {
+                background()
                 let totalItemWidth = (settings.width - (internalStyle.tabItemSpacing * CGFloat(dataStore.itemsCount - 1)))
                 let navBarItemWidth = totalItemWidth / CGFloat(dataStore.itemsCount)
                 if let navBarItemWidth, navBarItemWidth > 0, navBarItemWidth <= settings.width {

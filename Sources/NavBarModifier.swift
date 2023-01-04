@@ -44,7 +44,7 @@ private struct NavBarWrapperView: View {
     @MainActor var body: some View {
         switch style {
         case let barStyle as BarStyle:
-            IndicatorBarView(indicator: barStyle.indicatorView)
+            IndicatorBarView(indicator: barStyle.indicatorView, background: barStyle.barBackgroundView)
         case is SegmentedControlStyle:
             SegmentedNavBarView(selection: $selection)
         case let indicatorStyle as BarButtonStyle:
@@ -52,7 +52,7 @@ private struct NavBarWrapperView: View {
                 ScrollableNavBarView(selection: $selection)
             } else {
                 FixedSizeNavBarView(selection: $selection) { indicatorStyle.barBackgroundView() }
-                IndicatorBarView(indicator: indicatorStyle.indicatorView)
+                IndicatorBarView(indicator: indicatorStyle.indicatorView, background: { EmptyView() })
             }
         default:
             SegmentedNavBarView(selection: $selection)

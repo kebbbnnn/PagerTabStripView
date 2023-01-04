@@ -33,8 +33,8 @@ public protocol PagerWithIndicatorStyle: PagerStyle {
 }
 
 extension PagerStyle where Self == BarStyle {
-    public static func bar(placement: Placement = .default, pagerAnimation: Animation = .default, indicatorViewHeight: CGFloat = 10, indicatorView: @escaping () -> some View = { Rectangle() }) -> BarStyle {
-        return BarStyle(placement: placement, pagerAnimation: pagerAnimation, indicatorViewHeight: indicatorViewHeight, indicatorView: { .init(indicatorView()) })
+    public static func bar(placement: Placement = .default, pagerAnimation: Animation = .default, indicatorViewHeight: CGFloat = 10, barBackgroundView: @escaping () -> some View = { EmptyView() }, indicatorView: @escaping () -> some View = { Rectangle() }) -> BarStyle {
+        return BarStyle(placement: placement, pagerAnimation: pagerAnimation, indicatorViewHeight: indicatorViewHeight, barBackgroundView: { .init(barBackgroundView()) }, indicatorView: { .init(indicatorView()) })
     }
 }
 
