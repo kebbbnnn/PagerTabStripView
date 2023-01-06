@@ -16,18 +16,20 @@ public struct PagerTabStripView<Content>: View where Content: View {
     private var content: () -> Content
     private var swipeGestureEnabled: Binding<Bool>
     private var selection: Binding<Int>?
+    private var contentOffset: Binding<CGFloat>
     @State private var selectionState = 0
     @StateObject private var settings: PagerSettings
 
-    public init(swipeGestureEnabled: Binding<Bool> = .constant(true), selection: Binding<Int>? = nil, @ViewBuilder content: @escaping () -> Content) {
+    public init(swipeGestureEnabled: Binding<Bool> = .constant(true), selection: Binding<Int>? = nil, contentOffset: Binding<CGFloat>, @ViewBuilder content: @escaping () -> Content) {
         self.swipeGestureEnabled = swipeGestureEnabled
         self.selection = selection
+        self.contentOffset = contentOffset
         self.content = content
         self._settings = StateObject(wrappedValue: PagerSettings())
     }
 
     @MainActor public var body: some View {
-        WrapperPagerTabStripView(swipeGestureEnabled: swipeGestureEnabled, selection: selection ?? $selectionState, content: content)
+        WrapperPagerTabStripView(swipeGestureEnabled: swipeGestureEnabled, selection: selection ?? $selectionState, contentOffset: contentOffset, content: content)
             .environmentObject(self.settings)
     }
 }
@@ -49,10 +51,13 @@ private struct WrapperPagerTabStripView<Content>: View where Content: View {
     }
     @GestureState private var translation: CGFloat = 0
     @Binding private var swipeGestureEnabled: Bool
+    
+    @Binding var contentOffset: CGFloat
 
-    public init(swipeGestureEnabled: Binding<Bool>, selection: Binding<Int>, @ViewBuilder content: @escaping () -> Content) {
+    public init(swipeGestureEnabled: Binding<Bool>, selection: Binding<Int>, contentOffset: Binding<CGFloat>, @ViewBuilder content: @escaping () -> Content) {
         self._swipeGestureEnabled = swipeGestureEnabled
         self._selection = selection
+        self._contentOffset = contentOffset
         self.content = content
     }
 
@@ -121,6 +126,9 @@ private struct WrapperPagerTabStripView<Content>: View where Content: View {
                 dataStore.items[selection]?.tabViewDelegate?.setState(state: .selected)
                 dataStore.items[selection]?.appearCallback?()
             }
+            .onChange(of: self.settings.contentOffset, perform: { newValue in
+                self.contentOffset = newValue
+            })
         }
         .modifier(NavBarModifier(selection: $selection))
         .environmentObject(dataStore)
