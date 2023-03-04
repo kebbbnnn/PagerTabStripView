@@ -133,10 +133,13 @@ internal struct IndicatorScrollableBarView: View {
                     let items = dataStore.items.filter { index, _ in
                         index < newValue
                     }
-                    selectedItemWidth = dataStore.items[newValue]?.itemWidth ?? 0
-                    var newPosition = items.map({return $0.value.itemWidth ?? 0}).reduce(0, +)
-                    newPosition += (internalStyle.tabItemSpacing * CGFloat(newValue)) + selectedItemWidth/2
-                    position = newPosition
+                    
+                    withAnimation(.easeInOut) {
+                        selectedItemWidth = dataStore.items[newValue]?.itemWidth ?? 0
+                        var newPosition = items.map({return $0.value.itemWidth ?? 0}).reduce(0, +)
+                        newPosition += (internalStyle.tabItemSpacing * CGFloat(newValue)) + selectedItemWidth/2
+                        position = newPosition
+                    }
                 }
         }
     }
