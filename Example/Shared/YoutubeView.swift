@@ -15,7 +15,7 @@ struct YoutubeView: View {
     @ObservedObject var accountModel = AccountModel()
 
     @MainActor var body: some View {
-        PagerTabStripView {
+        PagerTabStripView(contentOffset: .constant(0)) {
             PostsList(isLoading: $homeModel.isLoading, items: homeModel.posts).pagerTabItem {
                 YoutubeNavBarItem(title: "Home", imageName: "home")
             }.onPageAppear {

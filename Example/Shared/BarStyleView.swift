@@ -16,7 +16,7 @@ struct BarStyleView: View {
     @ObservedObject var likesModel = LikesModel()
 
     @MainActor var body: some View {
-        PagerTabStripView(selection: $selection) {
+        PagerTabStripView(selection: $selection, contentOffset: .constant(0)) {
             PostsList(isLoading: $tweetsModel.isLoading, items: tweetsModel.posts).pagerTabItem {
             }
 

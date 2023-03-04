@@ -22,7 +22,7 @@ struct CustomStyleView: View {
     ]
 
     @MainActor var body: some View {
-        PagerTabStripView(selection: $selection) {
+        PagerTabStripView(selection: $selection, contentOffset: .constant(0)) {
 
             ForEach(🌈, id: \.self) { color in
                 ZStack(alignment: .center) {
