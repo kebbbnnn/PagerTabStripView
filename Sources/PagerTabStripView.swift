@@ -19,18 +19,22 @@ public struct PagerTabStripView<Content>: View where Content: View {
     private var contentOffset: Binding<CGFloat>
     @State private var selectionState = 0
     @StateObject private var settings: PagerSettings
+    @StateObject private var navBarItemPressGestureState = NavBarItemPressGestureState()
+    private var onNavBarItemPressGesture: ((NavBarItemPressGestureState.PressGesture) -> Void)?
 
-    public init(swipeGestureEnabled: Binding<Bool> = .constant(true), selection: Binding<Int>? = nil, contentOffset: Binding<CGFloat>, @ViewBuilder content: @escaping () -> Content) {
+    public init(swipeGestureEnabled: Binding<Bool> = .constant(true), selection: Binding<Int>? = nil, contentOffset: Binding<CGFloat>, onNavBarItemPressGesture: ((NavBarItemPressGestureState.PressGesture) -> Void)? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.swipeGestureEnabled = swipeGestureEnabled
         self.selection = selection
         self.contentOffset = contentOffset
+        self.onNavBarItemPressGesture = onNavBarItemPressGesture
         self.content = content
         self._settings = StateObject(wrappedValue: PagerSettings())
     }
 
     @MainActor public var body: some View {
-        WrapperPagerTabStripView(swipeGestureEnabled: swipeGestureEnabled, selection: selection ?? $selectionState, contentOffset: contentOffset, content: content)
+        WrapperPagerTabStripView(swipeGestureEnabled: swipeGestureEnabled, selection: selection ?? $selectionState, contentOffset: contentOffset, onNavBarItemPressGesture: onNavBarItemPressGesture, content: content)
             .environmentObject(self.settings)
+            .environmentObject(self.navBarItemPressGestureState)
     }
 }
 
@@ -39,6 +43,7 @@ private struct WrapperPagerTabStripView<Content>: View where Content: View {
     private var content: () -> Content
 
     @StateObject private var dataStore = DataStore()
+    @EnvironmentObject private var navBarItemPressGestureState: NavBarItemPressGestureState
     @Environment(\.pagerStyle) var style: PagerStyle
     @EnvironmentObject private var settings: PagerSettings
     @Binding var selection: Int {
@@ -53,11 +58,13 @@ private struct WrapperPagerTabStripView<Content>: View where Content: View {
     @Binding private var swipeGestureEnabled: Bool
     
     @Binding var contentOffset: CGFloat
+    private var onNavBarItemPressGesture: ((NavBarItemPressGestureState.PressGesture) -> Void)?
 
-    public init(swipeGestureEnabled: Binding<Bool>, selection: Binding<Int>, contentOffset: Binding<CGFloat>, @ViewBuilder content: @escaping () -> Content) {
+    public init(swipeGestureEnabled: Binding<Bool>, selection: Binding<Int>, contentOffset: Binding<CGFloat>, onNavBarItemPressGesture: ((NavBarItemPressGestureState.PressGesture) -> Void)? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._swipeGestureEnabled = swipeGestureEnabled
         self._selection = selection
         self._contentOffset = contentOffset
+        self.onNavBarItemPressGesture = onNavBarItemPressGesture
         self.content = content
     }
 
@@ -129,6 +136,10 @@ private struct WrapperPagerTabStripView<Content>: View where Content: View {
             .onChange(of: self.settings.contentOffset, perform: { newValue in
                 self.contentOffset = newValue
             })
+            .onReceive(self.navBarItemPressGestureState.$press) { press in
+                guard case let .some(value) = press else { return }
+                onNavBarItemPressGesture?(value)
+            }
         }
         .modifier(NavBarModifier(selection: $selection))
         .environmentObject(dataStore)
