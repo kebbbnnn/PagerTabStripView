@@ -11,6 +11,8 @@ import SwiftUI
 internal struct ScrollableNavBarView: View {
     @Binding private var selection: Int
     @State private var switchAppeared: Bool = false
+    
+    @State private var putIndicatorAbove: Bool = false
 
     @EnvironmentObject private var dataStore: DataStore
 
@@ -23,12 +25,17 @@ internal struct ScrollableNavBarView: View {
             ScrollViewReader { value in
                 ScrollView(.horizontal, showsIndicators: false) {
                     VStack {
+                        if self.putIndicatorAbove {
+                            IndicatorScrollableBarView(selection: $selection)
+                        }
                         HStack(spacing: internalStyle.tabItemSpacing) {
                             ForEach(0..<dataStore.itemsCount, id: \.self) { idx in
                                 NavBarItem(id: idx, selection: $selection)
                             }
                         }
-                        IndicatorScrollableBarView(selection: $selection)
+                        if !self.putIndicatorAbove {
+                            IndicatorScrollableBarView(selection: $selection)
+                        }
                     }
                     .frame(height: internalStyle.tabItemHeight)
                 }
@@ -43,7 +50,7 @@ internal struct ScrollableNavBarView: View {
                         remainingItemsWidth += items.map {$0.value.itemWidth ?? 0}.reduce(0, +)
                         remainingItemsWidth += CGFloat(dataStore.items.count-1 - selection)*internalStyle.tabItemSpacing
                         let centerSel = remainingItemsWidth > settings.width/2
-                        value.scrollTo(centerSel ? selection : dataStore.items.count-1, anchor: centerSel ? .center : nil)
+                        value.scrollTo(centerSel ? selection : dataStore.items.count-1, anchor: /*centerSel ? .center :*/ nil)
                     }
                 }
                 .onChange(of: selection) { newSelection in
@@ -53,6 +60,9 @@ internal struct ScrollableNavBarView: View {
                 }
             }
             .onAppear {
+                if case let .content(position) = internalStyle.placement, position == .bottom {
+                    self.putIndicatorAbove = true
+                }
                 switchAppeared = !switchAppeared
             }
         }
