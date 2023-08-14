@@ -24,6 +24,7 @@ struct NavBarModifier: ViewModifier {
                     content
                 case .bottom:
                     content
+                        .overlay(ContentTapAbsorptionBlockerOverlay()) /// A hack to prevent content absobing the tap when top most area of nav bar was tapped.
                     NavBarWrapperView(selection: $selection)
                 }
             case .toolbar:
@@ -35,6 +36,19 @@ struct NavBarModifier: ViewModifier {
             }
         }
     }
+    
+    @ViewBuilder
+    func ContentTapAbsorptionBlockerOverlay() -> some View {
+        VStack {
+            Spacer()
+            
+            Color.clear
+                .frame(height: 8)
+                .contentShape(Rectangle())
+        }
+        .frame(maxHeight: .infinity)
+    }
+    
     @Environment(\.pagerStyle) var style: PagerStyle
 }
 

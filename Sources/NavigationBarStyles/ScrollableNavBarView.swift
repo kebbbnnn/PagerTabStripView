@@ -24,18 +24,29 @@ internal struct ScrollableNavBarView: View {
         if let internalStyle = style as? BarButtonStyle {
             ScrollViewReader { value in
                 ScrollView(.horizontal, showsIndicators: false) {
-                    VStack {
-                        if self.putIndicatorAbove {
-                            IndicatorScrollableBarView(selection: $selection)
+                    ZStack(alignment: .center) {
+                        VStack {
+                            if self.putIndicatorAbove {
+                                IndicatorScrollableBarView(selection: $selection)
+                            }
+                            /*HStack(spacing: internalStyle.tabItemSpacing) {
+                                ForEach(0..<dataStore.itemsCount, id: \.self) { idx in
+                                    NavBarItem(id: idx, selection: $selection)
+                                }
+                            }*/
+                            Spacer()
+                            
+                            if !self.putIndicatorAbove {
+                                IndicatorScrollableBarView(selection: $selection)
+                            }
                         }
+                        
                         HStack(spacing: internalStyle.tabItemSpacing) {
                             ForEach(0..<dataStore.itemsCount, id: \.self) { idx in
                                 NavBarItem(id: idx, selection: $selection)
                             }
                         }
-                        if !self.putIndicatorAbove {
-                            IndicatorScrollableBarView(selection: $selection)
-                        }
+                        .frame(maxHeight: .infinity)
                     }
                     .frame(height: internalStyle.tabItemHeight)
                 }
