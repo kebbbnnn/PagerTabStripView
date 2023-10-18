@@ -20,6 +20,8 @@ class DataItem {
     }
 }
 
+fileprivate var _itemWidthCache: [Int: Double] = [:]
+
 class DataStore: ObservableObject {
     @Published var items = [Int: DataItem]() {
         didSet {
@@ -56,5 +58,16 @@ class DataStore: ObservableObject {
 
     func remove(at index: Int) {
         items[index] = nil
+    }
+    
+    func setItemWidth(for index: Int, value: Double) {
+        guard value > 0 else { return }
+        
+        items[index]?.itemWidth = value
+        _itemWidthCache[index] = value
+    }
+    
+    func getItemWidth(for index: Int) -> Double? {
+        return items[index]?.itemWidth ?? _itemWidthCache[index]
     }
 }

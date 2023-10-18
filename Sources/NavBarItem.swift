@@ -61,7 +61,7 @@ struct NavBarItem: View, Identifiable {
             }.background(
                 GeometryReader { geometry in
                     Color.clear.onAppear {
-                        dataStore.items[id]?.itemWidth = geometry.size.width
+                        dataStore.setItemWidth(for: id, value: geometry.size.width)
                         let widthUpdated = dataStore.items.filter({ $0.value.itemWidth ?? 0 > 0 }).count == dataStore.itemsCount
                         dataStore.widthUpdated = dataStore.itemsCount > 0 && widthUpdated
                     }
